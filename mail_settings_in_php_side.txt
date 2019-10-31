@@ -1,0 +1,91 @@
+-----------------------------------------------------------------
+1. Setup to enable email sending in PHP side:
+
+-----------------------------------------------------------------
+1.1. We have to change the below config settings in PHP.INI file:
+
+SMTP = smtp.gmail.com
+
+[mail function]
+; XAMPP: Comment out this if you want to work with an SMTP Server like Mercury
+
+; SMTP = smtp.gmail.com
+
+; smtp_port = 465
+
+; For Win32 only.
+; http://php.net/sendmail-from
+;sendmail_from = postmaster@localhost
+
+
+
+-----------------------------------------------------------------
+1.2. Setting max execution time in PHP.INI
+-----------------------------------------------------------------
+
+max_execution_time = 14440 / 0
+
+
+
+-----------------------------------------------------------------
+1.3. Simple email code php:
+-----------------------------------------------------------------
+
+<?php
+$to      = 'nobody@example.com';
+$subject = 'the subject';
+$message = 'hello';
+$headers = 'From: webmaster@example.com' . "\r\n" .
+    'Reply-To: webmaster@example.com' . "\r\n" .
+    'X-Mailer: PHP/' . phpversion();
+
+mail($to, $subject, $message, $headers);
+?> 
+
+-----------------------------------------------------------------
+1.4. Simple SMTP email using buildin classes in PHP:
+-----------------------------------------------------------------
+
+<?php
+require 'PHPMailerAutoload.php';
+
+$mail = new PHPMailer;
+
+$mail->isSMTP();                                      // Set mailer to use SMTP
+$mail->Host = 'smtp1.example.com;smtp2.example.com';  // Specify main and backup SMTP servers
+$mail->SMTPAuth = true;                               // Enable SMTP authentication
+$mail->Username = 'user@example.com';                 // SMTP username
+$mail->Password = 'secret';                           // SMTP password
+$mail->SMTPSecure = 'tls';                            // Enable encryption, 'ssl' also accepted
+
+$mail->From = 'from@example.com';
+$mail->FromName = 'Mailer';
+$mail->addAddress('joe@example.net', 'Joe User');     // Add a recipient
+$mail->addAddress('ellen@example.com');               // Name is optional
+$mail->addReplyTo('info@example.com', 'Information');
+$mail->addCC('cc@example.com');
+$mail->addBCC('bcc@example.com');
+
+$mail->WordWrap = 50;                                 // Set word wrap to 50 characters
+$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
+$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
+$mail->isHTML(true);                                  // Set email format to HTML
+
+$mail->Subject = 'Here is the subject';
+$mail->Body    = 'This is the HTML message body <b>in bold!</b>';
+$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+if(!$mail->send()) {
+    echo 'Message could not be sent.';
+    echo 'Mailer Error: ' . $mail->ErrorInfo;
+} else {
+    echo 'Message has been sent';
+}
+?>
+
+
+
+
+
+
+
